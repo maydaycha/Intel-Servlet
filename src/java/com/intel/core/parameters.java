@@ -1,3 +1,4 @@
+package com.intel.core;
 
 public class parameters {
 	
