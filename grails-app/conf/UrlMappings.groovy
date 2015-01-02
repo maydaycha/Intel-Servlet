@@ -2,14 +2,8 @@ class UrlMappings {
 
 	static mappings = {
 
-//        "/Mappers"	{
-//            controller	= 'Mapper'
-//            action		= { 'create' }
-//        }
-//
-//        "/Mappers/$id?" {
-//            controller = ""
-//        }
+
+        "/Mappers"(resources: "Mappers")
 
 
         "/$controller/$action?/$id?(.$format)?"{
