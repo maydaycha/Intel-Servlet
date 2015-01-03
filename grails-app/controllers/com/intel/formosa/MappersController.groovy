@@ -20,16 +20,16 @@ class MappersController {
     def save () {
         def jsonObject = request.JSON
 
-        Mapper mapper = new Mapper();
-        def jsonString = mapper.run();
-
         //TODO: call mapper
 
-        render jsonString as JSON
+//        Mapper mapper = new Mapper();
+//        jsonObject = mapper.run();
+
+        render jsonObject as JSON
     }
 
     def delete () {
-        render "delete!"
+        render params as JSON
     }
 }
 
