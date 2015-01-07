@@ -1,31 +1,28 @@
 package com.intel.formosa
 
-import com.intel.core.Mapper
 import grails.converters.JSON
+import org.json.simple.JSONObject
 
 class MappersController {
+//    HashMap threadPool = new HashMap();
 
     def index() { }
 
     def create () {
-
         def jsonObject = request.JSON
-
-        //TODO: call mapper
-
         render jsonObject as JSON
     }
 
 
     def save () {
-        def jsonObject = request.JSON
+        JSONObject jsonObject = request.JSON
 
-        //TODO: call mapper
+        //TODO: call test
+//        com.intel.formosa.test.Main test = new com.intel.formosa.test.Main()
+        JSONObject result = new com.intel.formosa.test.Main().run(jsonObject)
+//        JSONObject result = test.run(jsonObject)
 
-//        Mapper mapper = new Mapper();
-//        jsonObject = mapper.run();
-
-        render jsonObject as JSON
+        render result as JSON
     }
 
     def delete () {
