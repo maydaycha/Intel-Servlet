@@ -60,6 +60,10 @@ public class Main {
     /** for Jason Chiu testing */
     public JSONObject run1(String jsonObjString) throws ParseException {
 
+        String sessionId = "";
+
+
+
         JSONParser parser = new JSONParser();
 
         JSONObject jsonObj = (JSONObject)parser.parse(jsonObjString);
@@ -72,12 +76,23 @@ public class Main {
             JSONObject sensor = (JSONObject) o;
             Boolean check = (Boolean) sensor.get("check");
             if(check){
+                sessionId = sensor.get("z").toString();
                 String type = (String) sensor.get("type");
                 sensor.remove("deviceName");
                 sensor.put("deviceName", "Device" + i);
                 i++;
             }
         }
+
+        Go2 go2 = new Go2();
+        new Thread(go2).start();
+        System.out.println("Run Go2");
+        if (runnableInstance.containsKey(sessionId)) {
+            runnableInstance.remove(sessionId);
+            runnableInstance.put(sessionId, go2);
+        }
+        runnableInstance.put(sessionId, go2);
+
         jsonObj.put("success", true);
 //        jsonObj.put("success", false);
         return jsonObj;
@@ -177,7 +192,7 @@ public class Main {
 
             runnableInstance.put(sessionId, go);
 
-            System.out.print("add " + sessionId + " to HashMap");
+            System.out.println("add " + sessionId + " to HashMap");
         }
         else{
 
@@ -450,11 +465,15 @@ public class Main {
    */
 
     public void stopRuleEngine(String sessionId) {
+        System.out.println("stopRuleEngine 467");
         if (sessionId != null && !sessionId.equals("")) {
+            System.out.println("stopRuleEngine 469");
             if (runnableInstance.containsKey(sessionId)) {
-                Go g = (Go)runnableInstance.get(sessionId);
-                g.setAliveFlag(false);
+                System.out.println("stopRuleEngine 471");
+                Go2 go2 = (Go2)runnableInstance.get(sessionId);
+                go2.setAliveFlag(false);
                 runnableInstance.remove(sessionId);
+                System.out.println("stopRuleEngine: " + sessionId);
             }
         }
     }

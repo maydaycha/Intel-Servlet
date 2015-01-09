@@ -299,6 +299,8 @@ public class Go implements Runnable {
                     if(WarningDevice != null)
                         WarningDevice.finalize();
 
+                    System.out.println("Stop Subscribe");
+
                     break;
                 }
             }
@@ -307,6 +309,7 @@ public class Go implements Runnable {
 
     public void setAliveFlag(boolean alive) {
         parameters.five_s_alive = alive;
+        System.out.println("[setAliveFlag]: " + parameters.five_s_alive);
     }
 
 }

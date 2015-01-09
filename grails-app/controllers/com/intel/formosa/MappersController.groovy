@@ -8,6 +8,7 @@ class MappersController {
     HashMap threadPool = new HashMap();
     Main main = null
 
+
     def index() {
         Set<Thread> threadSet = Thread.getAllStackTraces().keySet();
         for (Thread t: threadSet) {
@@ -35,9 +36,9 @@ class MappersController {
             main = new Main()
         }
 
-        JSONObject result = main.run(jsonObject.toJSONString())
+//        JSONObject result = main.run(jsonObject.toJSONString())
 
-//        JSONObject result = new com.intel.formosa.test.Main().run1(jsonObject.toJSONString())
+        JSONObject result = main.run1(jsonObject.toJSONString())
 
         print result
 //        JSONObject result = test.run(jsonObject)
