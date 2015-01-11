@@ -2,22 +2,16 @@ package com.intel.formosa
 
 import grails.converters.JSON
 import org.json.simple.JSONObject
-import com.intel.formosa.test.Main
+import com.intel.formosa.test.Mapper
 class MappersController {
 
     HashMap threadPool = new HashMap();
-    Main main = null
+    Mapper mapper = null
 
 
     def index() {
-        Set<Thread> threadSet = Thread.getAllStackTraces().keySet();
-        for (Thread t: threadSet) {
-            print "[Pool]: " + t.getId();
-            if (t.getId() == 33) {
-                print "[pool]: interupt 33"
-                t.interrupt();
-            }
-        }
+        log.info("hi")
+        render "hi"
     }
 
     def create () {
@@ -32,13 +26,15 @@ class MappersController {
         //TODO: call test
 //        com.intel.formosa.test.Main test = new com.intel.formosa.test.Main()
 
-        if (main == null) {
-            main = new Main()
+        if (mapper == null) {
+            mapper = new Mapper()
         }
 
-//        JSONObject result = main.run(jsonObject.toJSONString())
+//        JSONObject result = mapper.run(jsonObject.toJSONString())
 
-        JSONObject result = main.run1(jsonObject.toJSONString())
+        log.debug("run1")
+
+        JSONObject result = mapper.run1(jsonObject.toJSONString())
 
         print result
 //        JSONObject result = test.run(jsonObject)
@@ -62,12 +58,13 @@ class MappersController {
     def delete () {
         def sessionId =  params.id
         sessionId = sessionId.replaceAll("_", ".")
-        print  sessionId
-        if (main == null) {
+        print "[delete] session id : " + sessionId
+        if (mapper == null) {
             render "no mapper current running: " + sessionId
         } else {
             if (sessionId != null) {
-                main.stopRuleEngine(sessionId);
+                print "[delete] start stopRuleEngine"
+                mapper.stopRuleEngine(sessionId);
                 JSONObject result = new JSONObject();
                 result.put("action", "delete");
                 result.put("success", true);

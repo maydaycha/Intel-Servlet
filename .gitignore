@@ -2,4 +2,5 @@
 *.iml
 target/work/*
 target/classes/*
+target/*.log
 

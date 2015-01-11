@@ -29,10 +29,10 @@ public class FIMqttLooper extends FIMqttOperator {
         timer.cancel();
         timer = new Timer();
         parameters.five_s_alive = true;
-        timer.schedule(new SayHello(), 5000, 100000);
+        timer.schedule(new Die(), 5000, 100000);
     }
 
-    class SayHello extends TimerTask {
+    class Die extends TimerTask {
         public void run() {
             parameters.five_s_alive = false;
         }

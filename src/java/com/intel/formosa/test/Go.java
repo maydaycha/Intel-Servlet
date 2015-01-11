@@ -100,18 +100,21 @@ public class Go implements Runnable {
                 //System.out.println(o);
                 JSONObject object = (JSONObject) o;
                 JSONArray a = (JSONArray) object.get("wires");
+                String operator = null;
+                boolean Alarm = false;
 
                 switch(Nodes.getByName(object.get("type").toString())){
 
                     case Meter_S:
 
                         System.out.println("case Meter_S");
+                        Alarm = false;
 
                         powerSwitch = new FIMqttACActuator(
                                 "tcp://192.168.184.129:1883",
                                 "/formosa/"+object.get("z")+"/"+object.get("id"),
                                 new FIConfigParams().setParameter("ameliacreek", object.get("deviceName")),
-                                parameters,
+                                Alarm,
                                 "/formosa/"+object.get("z")+"/"+ a.get(0).toString().substring(2, a.get(0).toString().length()-2));
 
                         powerSwitch.start();
@@ -128,13 +131,13 @@ public class Go implements Runnable {
                     case IASWD_S:
 
                         System.out.println("case IASWD_S");
-                        parameters.Alarm = true;
+                        Alarm = true;
 
                         WarningDevice = new FIMqttACActuator(
                                 "tcp://192.168.184.129:1883",
                                 "/formosa/"+object.get("z")+"/"+object.get("id"),
                                 new FIConfigParams().setParameter("ameliacreek", object.get("deviceName")),
-                                parameters,
+                                Alarm,
                                 "/formosa/"+object.get("z")+"/"+ a.get(0).toString().substring(2, a.get(0).toString().length()-2));
 
                         WarningDevice.start();
@@ -151,12 +154,12 @@ public class Go implements Runnable {
                     case LessEqualThan:
 
                         System.out.println("case LessThan");
-                        parameters.compare = "LessEqualThan";
+                        operator = "LessEqualThan";
                         lessEqualThanOperator = new FIMqttLessThanOperator(
                                 "tcp://192.168.184.129:1883",
                                 "/formosa/"+object.get("z")+"/"+object.get("id"),
                                 new FIConfigParams(),
-                                parameters,
+                                operator,
                                 "/formosa/"+object.get("z")+"/"+ a.get(0).toString().substring(2, a.get(0).toString().length()-2),
                                 "/formosa/"+object.get("z")+"/"+ a.get(1).toString().substring(2, a.get(1).toString().length()-2));
 
@@ -166,12 +169,12 @@ public class Go implements Runnable {
                     case LessThan:
 
                         System.out.println("case LessThan");
-                        parameters.compare = "LessThan";
+                        operator = "LessThan";
                         lessThanOperator = new FIMqttLessThanOperator(
                                 "tcp://192.168.184.129:1883",
                                 "/formosa/"+object.get("z")+"/"+object.get("id"),
                                 new FIConfigParams(),
-                                parameters,
+                                operator,
                                 "/formosa/"+object.get("z")+"/"+ a.get(0).toString().substring(2, a.get(0).toString().length()-2),
                                 "/formosa/"+object.get("z")+"/"+ a.get(1).toString().substring(2, a.get(1).toString().length()-2));
 
@@ -181,12 +184,12 @@ public class Go implements Runnable {
                     case Equal:
 
                         System.out.println("case Equal");
-                        parameters.compare = "Equal";
+                        operator = "Equal";
                         EqualOperator = new FIMqttLessThanOperator(
                                 "tcp://192.168.184.129:1883",
                                 "/formosa/"+object.get("z")+"/"+object.get("id"),
                                 new FIConfigParams(),
-                                parameters,
+                                operator,
                                 "/formosa/"+object.get("z")+"/"+ a.get(0).toString().substring(2, a.get(0).toString().length()-2),
                                 "/formosa/"+object.get("z")+"/"+ a.get(1).toString().substring(2, a.get(1).toString().length()-2));
 
@@ -207,7 +210,7 @@ public class Go implements Runnable {
 
                     case IlluminanceMeasurement_S:
 
-                        System.out.println("case IlluminanceMeasurement_S : "+object.get("deviceName"));
+                        System.out.println("case IlluminanceMeasurement_S");
 
                         Illuminance = new FIMqttACSensor(
                                 "tcp://192.168.184.129:1883",
@@ -280,6 +283,7 @@ public class Go implements Runnable {
 
             parameters.five_s_alive = true;
             while(true){
+                System.out.println("[while] parameters.five_s_alive = " + parameters.five_s_alive);
                 if(!parameters.five_s_alive){
 
                     if(Illuminance != null)
@@ -299,8 +303,7 @@ public class Go implements Runnable {
                     if(WarningDevice != null)
                         WarningDevice.finalize();
 
-                    System.out.println("Stop Subscribe");
-
+                    System.out.println("[Rule Engine] STOP!");
                     break;
                 }
             }
@@ -309,7 +312,7 @@ public class Go implements Runnable {
 
     public void setAliveFlag(boolean alive) {
         parameters.five_s_alive = alive;
-        System.out.println("[setAliveFlag]: " + parameters.five_s_alive);
+        System.out.println("[setAliveFlag] parameters.five_s_alive = " + parameters.five_s_alive);
     }
 
 }
