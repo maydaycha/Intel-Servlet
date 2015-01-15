@@ -3,4 +3,5 @@
 target/work/*
 target/classes/*
 target/*.log
+target/*.war
 

@@ -181,8 +181,8 @@ public class Mapper {
     private void sendGet() throws Exception {
 
 
-        String url_broker = "http://192.168.184.129:8000/wsbroker/api/networks";
-//		String url_broker = "http://127.0.0.1:8000/wsbroker/api/networks";
+//        String url_broker = "http://192.168.184.129:8000/wsbroker/api/networks";
+		String url_broker = "http://127.0.0.1:8000/wsbroker/api/networks";
 
         int index_sa = 0;
         int n = 0;
@@ -236,8 +236,8 @@ public class Mapper {
         }
 
 
-//		String url = "http://127.0.0.1:8080/wsgtwy/net/getlist/";
-        String url = "http://192.168.184.129:8080/wsgtwy/net/getlist/";
+		String url = "http://127.0.0.1:8080/wsgtwy/net/getlist/";
+//        String url = "http://192.168.184.129:8080/wsgtwy/net/getlist/";
 
         URL obj = new URL(url);
         HttpURLConnection con = (HttpURLConnection) obj.openConnection();
