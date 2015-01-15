@@ -294,34 +294,42 @@ public class Go implements Runnable {
                     System.out.println("[in while in if] parameters.five_s_alive = " + parameters.five_s_alive);
                     if(Illuminance != null){
                         Illuminance.stop();
+                        Illuminance.finalize();
                         Illuminance = null;
                     }
                     if(Temperature != null){
                         Temperature.stop();
+                        Temperature.finalize();
                         Temperature = null;
                     }
                     if(number != null){
                         number.stop();
+                        number.finalize();
                         number = null;
                     }
                     if(lessThanOperator != null){
                         lessThanOperator.stop();
+                        lessThanOperator.finalize();
                         lessThanOperator = null;
                     }
                     if(lessEqualThanOperator != null){
                         lessEqualThanOperator.stop();
+                        lessEqualThanOperator.finalize();
                         lessThanOperator = null;
                     }
                     if(EqualOperator != null){
                         EqualOperator.stop();
+                        EqualOperator.finalize();
                         EqualOperator = null;
                     }
                     if(powerSwitch != null){
                         powerSwitch.stop();
+                        powerSwitch.finalize();
                         powerSwitch = null;
                     }
                     if(WarningDevice != null){
                         WarningDevice.stop();
+                        WarningDevice.finalize();
                         WarningDevice = null;
                     }
 
@@ -351,11 +359,11 @@ public class Go implements Runnable {
                     break;
                 }
 
-                try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
+//                try {
+//                    Thread.sleep(1000);
+//                } catch (InterruptedException e) {
+//                    e.printStackTrace();
+//                }
 
             }
         }
