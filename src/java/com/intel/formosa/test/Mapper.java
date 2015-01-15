@@ -66,6 +66,7 @@ public class Mapper {
         JSONParser parser = new JSONParser();
 
         JSONObject jsonObj = (JSONObject)parser.parse(jsonObjString);
+        String sessionId = ";";
 
         jsonObj.remove("type");
         jsonObj.put("type", "resp");
@@ -73,14 +74,29 @@ public class Mapper {
         int i = 0;
         for (Object o : a) {
             JSONObject sensor = (JSONObject) o;
+            sessionId = sensor.get("z").toString();
             Boolean check = (Boolean) sensor.get("check");
             if(check){
                 String type = (String) sensor.get("type");
                 sensor.remove("deviceName");
-                sensor.put("deviceName", "Device" + i);
+                sensor.put("deviceName", "Device" + i + "II");
                 i++;
             }
         }
+
+        if (runnableInstance.containsKey(sessionId)) {
+            Go2 g = (Go2) runnableInstance.get(sessionId);
+            g.setAliveFlag(false);
+            g = null;
+            runnableInstance.remove(sessionId);
+        }
+
+        Go2 go = new Go2();
+        Thread t1 = new Thread(go);
+        t1.start();
+        runnableInstance.put(sessionId, go);
+        System.out.println("Add " + sessionId + " to Hash Map");
+
         jsonObj.put("success", true);
 //        jsonObj.put("success", false);
         return jsonObj;
@@ -141,19 +157,20 @@ public class Mapper {
         if(wehave == num){ //success
             jsonObj.put("success", true);
 
+            if (runnableInstance.containsKey(sessionId)) {
+                Go g = (Go) runnableInstance.get(sessionId);
+                g.setAliveFlag(false);
+                g = null;
+                runnableInstance.remove(sessionId);
+            }
+
             Go go = new Go(a);
             Thread t1 = new Thread(go);
             t1.start();
-
-            if (runnableInstance.containsKey(sessionId)) {
-                runnableInstance.remove(sessionId);
-            }
             runnableInstance.put(sessionId, go);
-
             System.out.print("add " + sessionId + " to HashMap");
-        }
-        else{
 
+        } else{
             jsonObj.put("success", false);
         }
         return jsonObj;
@@ -296,7 +313,7 @@ public class Mapper {
                             long now_time = (d.getTime())/1000;
                             long update_time = (date.getTime())/1000;
 
-                            if(now_time - update_time < 10)
+                            if(now_time - update_time < 5)
                                 d_alive = true;
                             else
                                 d_alive = false;
@@ -400,14 +417,15 @@ public class Mapper {
         System.out.println("[stopRuleEngine] function call");
         if (sessionId != null && !sessionId.equals("")) {
             if (runnableInstance.containsKey(sessionId)) {
-                Go g = (Go)runnableInstance.get(sessionId);
+                Go g = (Go) runnableInstance.get(sessionId);
                 System.out.println("[stopRuleEngine] get runnable by sessionId: " + sessionId);
                 g.setAliveFlag(false);
-                System.out.println("[stopRuleEngine] set flag false: " + sessionId);
+                System.out.println("[stopRuleEngine] set flag false: " + g.getAliveFlag());
+                g = null;
                 runnableInstance.remove(sessionId);
             }
         } else {
-            System.out.println("[stopRuleEngine] not entry in that ");
+            System.out.println("[stopRuleEngine] not entry ");
         }
     }
 }

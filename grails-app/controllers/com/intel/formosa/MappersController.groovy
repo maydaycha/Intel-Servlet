@@ -30,14 +30,10 @@ class MappersController {
             mapper = new Mapper()
         }
 
-//        JSONObject result = mapper.run(jsonObject.toJSONString())
+        JSONObject result = mapper.run(jsonObject.toJSONString())
+        log.debug("call run")
 
-        log.debug("run1")
-
-        JSONObject result = mapper.run1(jsonObject.toJSONString())
-
-        print result
-//        JSONObject result = test.run(jsonObject)
+//        JSONObject result = mapper.run1(jsonObject.toJSONString())
 
 //        JSONObject result = jsonObject
 //        result.session_id == null ? "1234" : result.session_id
@@ -58,12 +54,12 @@ class MappersController {
     def delete () {
         def sessionId =  params.id
         sessionId = sessionId.replaceAll("_", ".")
-        print "[delete] session id : " + sessionId
+        println "[delete] session id : " + sessionId
         if (mapper == null) {
             render "no mapper current running: " + sessionId
         } else {
             if (sessionId != null) {
-                print "[delete] start stopRuleEngine"
+                println "[delete] start stopRuleEngine"
                 mapper.stopRuleEngine(sessionId);
                 JSONObject result = new JSONObject();
                 result.put("action", "delete");

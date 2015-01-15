@@ -1,6 +1,10 @@
 package com.intel.formosa.test;
 
 
+import org.eclipse.paho.client.mqttv3.MqttClient;
+import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
+import org.eclipse.paho.client.mqttv3.MqttException;
+import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
@@ -28,7 +32,8 @@ public class Go implements Runnable {
     FIMqttObject WarningDevice = null;
     JSONArray jsonarray = null;
     Parameters parameters = null;
-
+    String topic = null;
+    String broker = "tcp://192.168.184.129:1883";
 
 	
 	/*
@@ -109,6 +114,7 @@ public class Go implements Runnable {
 
                         System.out.println("case Meter_S");
                         Alarm = false;
+                        topic = "/formosa/"+(String) object.get("z")+"/finish";
 
                         powerSwitch = new FIMqttACActuator(
                                 "tcp://192.168.184.129:1883",
@@ -123,7 +129,6 @@ public class Go implements Runnable {
                                 "tcp://192.168.184.129:1883",
                                 "/formosa/"+object.get("z")+"/Looper",
                                 new FIConfigParams(),
-                                parameters,
                                 "/formosa/"+object.get("z")+"/"+object.get("id"));
                         looper.start();
                         break;
@@ -132,6 +137,7 @@ public class Go implements Runnable {
 
                         System.out.println("case IASWD_S");
                         Alarm = true;
+                        topic = "/formosa/"+(String) object.get("z")+"/finish";
 
                         WarningDevice = new FIMqttACActuator(
                                 "tcp://192.168.184.129:1883",
@@ -146,7 +152,6 @@ public class Go implements Runnable {
                                 "tcp://192.168.184.129:1883",
                                 "/formosa/"+object.get("z")+"/Looper",
                                 new FIConfigParams(),
-                                parameters,
                                 "/formosa/"+object.get("z")+"/"+object.get("id"));
                         looper.start();
                         break;
@@ -282,37 +287,88 @@ public class Go implements Runnable {
             looper.run();
 
             parameters.five_s_alive = true;
-            while(true){
-                System.out.println("[while] parameters.five_s_alive = " + parameters.five_s_alive);
-                if(!parameters.five_s_alive){
 
-                    if(Illuminance != null)
-                        Illuminance.finalize();
-                    if(Temperature != null)
-                        Temperature.finalize();
-                    if(number != null)
-                        number.finalize();
-                    if(lessThanOperator != null)
-                        lessThanOperator.finalize();
-                    if(lessEqualThanOperator != null)
-                        lessEqualThanOperator.finalize();
-                    if(EqualOperator != null)
-                        EqualOperator.finalize();
-                    if(powerSwitch != null)
-                        powerSwitch.finalize();
-                    if(WarningDevice != null)
-                        WarningDevice.finalize();
+            while(true) {
+//                System.out.println("[while] parameters.five_s_alive = " + parameters.five_s_alive);
+                if (!parameters.five_s_alive){
+                    System.out.println("[in while in if] parameters.five_s_alive = " + parameters.five_s_alive);
+                    if(Illuminance != null){
+                        Illuminance.stop();
+                        Illuminance = null;
+                    }
+                    if(Temperature != null){
+                        Temperature.stop();
+                        Temperature = null;
+                    }
+                    if(number != null){
+                        number.stop();
+                        number = null;
+                    }
+                    if(lessThanOperator != null){
+                        lessThanOperator.stop();
+                        lessThanOperator = null;
+                    }
+                    if(lessEqualThanOperator != null){
+                        lessEqualThanOperator.stop();
+                        lessThanOperator = null;
+                    }
+                    if(EqualOperator != null){
+                        EqualOperator.stop();
+                        EqualOperator = null;
+                    }
+                    if(powerSwitch != null){
+                        powerSwitch.stop();
+                        powerSwitch = null;
+                    }
+                    if(WarningDevice != null){
+                        WarningDevice.stop();
+                        WarningDevice = null;
+                    }
+
+                    String content  = "{123}";
+                    MqttClient mMqttClient;
+                    try {
+                        mMqttClient = new MqttClient(broker,MqttClient.generateClientId());
+
+                        MqttConnectOptions connOpts = new MqttConnectOptions();
+                        connOpts.setCleanSession(true);
+
+                        mMqttClient.connect(connOpts);
+
+                        System.out.println("finish topic: " + topic);
+                        MqttMessage message = new MqttMessage(content.getBytes());
+                        message.setQos(1);
+                        mMqttClient.publish(topic, message);
+
+                        mMqttClient.disconnect();
+                    } catch (MqttException e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                        System.out.println("[exception]" + e);
+                    }
 
                     System.out.println("[Rule Engine] STOP!");
                     break;
                 }
+
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+
             }
         }
+        System.gc();
     }
 
     public void setAliveFlag(boolean alive) {
         parameters.five_s_alive = alive;
         System.out.println("[setAliveFlag] parameters.five_s_alive = " + parameters.five_s_alive);
+    }
+
+    public boolean getAliveFlag() {
+        return parameters.five_s_alive;
     }
 
 }
